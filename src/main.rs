@@ -157,22 +157,42 @@ mod ascii_engine {
         }
     }
 }
+/*
+ * Also note the fact that in this engine the cordinate plane is like this.
+ * ____
+ * --|+-
+ * -+|++
+ */
 
 use ascii_engine::geometry;
 use ascii_engine::util;
 use ascii_engine::render;
 
 fn main() {
-    let vector: geometry::Vector3 = geometry::Vector3::new(3.3, 4.4, 5.5);
+    // constants
+    const FPS: i32 = 15;
+    const SCREEN_WIDTH: i32 = 30;
+    const SCREEN_HEIGHT: i32 = 25;
+    let mut framebuffer: [char;SCREEN_HEIGHT as usize*SCREEN_WIDTH as usize] = ['.';SCREEN_WIDTH as usize*SCREEN_HEIGHT as usize];
 
-    let output_position: geometry::Vector3 = geometry::render_and_project(
-        &vector, // starting position
-        &geometry::Vector3::new(0.0, 0.0, 0.0), // object rotation
-        &geometry::Vector3::new(0.0, 0.0, 0.0), // object word cords
-        &geometry::Vector3::new(0.0, 0.0, 0.0), // camera orientation as angles ?
-        &geometry::Vector3::new(0.0, 0.0, 0.0)  // camera position
-        );
-    println!("{:?}\n{:?}", vector, output_position);
+    // mesh
+    let mut vertices: Vec<geometry::Vector3> = Vec::new();
+    vertices.push(geometry::Vector3::new(-0.5, -0.5, 0.0));
+    vertices.push(geometry::Vector3::new(-0.5,  0.5, 0.0));
+    vertices.push(geometry::Vector3::new( 0.5,  0.5, 0.0));
+
+    // game loop
+    loop {
+        //logic
+        //draw
+        render::plot_rect_to_framebuffer(&mut framebuffer, SCREEN_WIDTH,
+                                         SCREEN_HEIGHT, 3, 3, 3, 3,
+                                         '^');
+        //render
+        render::print_console_clear_char();
+        render::print_framebuffer(&framebuffer, SCREEN_WIDTH, SCREEN_HEIGHT);
+        util::sleep(1000 / FPS);
+    }
 }
 
 
